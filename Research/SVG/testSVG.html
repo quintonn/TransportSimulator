@@ -1,0 +1,360 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<html>
+    <head>
+        <script src="rounding.js"></script>
+    </head>
+<body style="width:100%; height:100%; left:0; top:0; margin:0; padding:0" onload="loaded()">
+
+<div onmousedown="mousedown(event)" style="background-color:beige;width:100%; height:100%;position:absolute;left:0;top:0" >
+
+<input type="range" id="myRange" value="1" max="20" style="position:absolute; left:0; top:0" oninput="updateTextInput(this.value)">
+
+<div style="position:absolute; top:30px">
+    <input id="radForward" type="radio" name="group2" checked="checked" onchange="directionChange()"/>Forward</label>
+    <input id="radBack" type="radio" name="group2"/ onchange="directionChange()">Backward</label>
+</div>
+<button style="position:absolute; top:50px" onclick="add()">Add</button>
+<button style="position:absolute; top:100px" onclick="curvePath()">CurvePath</button>
+
+<svg width="100%" height="100%"  xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" id="sx" >
+
+    <defs>
+        <pattern id="img1" patternUnits="userSpaceOnUse" width="100" height="100">
+            <image xlink:href="road.png" x="0" y="0" width="100" height="100" />
+        </pattern>
+    </defs>
+
+    <script>
+
+    var originalPathString = "M100,100 L200,100 L200,150 L250,150 L250,100 L300,100 L300,150 L350,150 L350,50 C350,50 450,0 550,50 C550,50 650,175 550,250 L50,250 L100,100 z";
+    
+    //var curvedPathString = "M100,200 C100,100 250,100 250,200 ";
+    //var curvedPathString =   "M500,300 L600,300 C700,300 700,400 600,400 L500,400";  //Turn around
+    //var curvedPathString =   "M500,300 L600,300 A30 30 0 0 1 630 330 L630,400";  //45 degree turn
+
+    var curvedPathString = "M265,266 L488,408 L801,375 L845,226 L729,140";
+    var curvedPathString2 = "M265,566 L488,408 L801,375 L845,226 L940,140";
+    var speed = 2;
+
+    function circle(x)
+    {
+        this.x = x;
+        this.lastX = 0;
+        this.lastY = 0;
+    }
+
+    function curvePath()
+    {
+        curvedPathString = roundPathCorners(curvedPathString, 10, false);
+        curvedPathString2 = roundPathCorners(curvedPathString2, 10, false);
+
+        path = document.getElementById("path");
+        var svg = document.getElementById('sx');
+
+        var roadPath = path.cloneNode();
+        roadPath.setAttribute('d', curvedPathString);
+        roadPath.setAttribute('stroke', 'black');
+        roadPath.setAttribute('stroke-width', '20');
+
+        var path2 = roadPath.cloneNode();
+        path2.setAttribute('d', curvedPathString2);
+
+        svg.appendChild(roadPath);
+        svg.appendChild(path2);
+    }
+
+    function add()
+    {
+        var cc = gameList[gameList.length];
+        //var minNum = Math.max(0, gameList.length - 1);
+        
+        //var circlex = document.getElementsByName("circle"+minNum)[0];
+        var circlex = document.getElementById('triangle');
+
+        var nameX = gameList.length;// parseInt(circlex.getAttribute("name").replace('circle','')) + 1;
+
+        var newCircle = circlex.cloneNode();
+        newCircle.setAttribute('name', 'circle'+nameX);
+        newCircle.setAttribute('fill', 'yellow');
+        newCircle.setAttribute('stroke', 'black');
+        
+        var transformAttr = ' translate(' + (0) + ',' + (0) + ')';
+        newCircle.setAttribute('transform', transformAttr);
+		newCircle.id = 'circle'+nameX;
+
+        var svg = document.getElementById('sx');
+
+        setTimeout(function()
+        {
+            svg.appendChild(newCircle);
+            
+            
+            var zz = gameList[nameX];
+
+            var xx = new circle(0);
+            
+            //xx.lastX = zz.lastX;
+            //xx.lastY = zz.lastY;
+
+            gameList.push(xx);
+        }, 10);
+    }
+
+    function directionChange()
+    {
+        var forw = document.getElementById("radForward").checked;
+        var back = document.getElementById("radBack").checked;
+        
+        if (forw) direction = FORWARD
+            else if (back) direction = BACKWARD;
+    }
+
+    function updateTextInput(value)
+    {
+        speed = parseInt(value);
+    }
+
+    var pause = true;
+    var gameList;
+    var x = 0;
+    var xOffset = 0;//-25;
+    var yOffset = 0;//27.5;
+    var lastX = -10;
+    var lastY = -10;
+
+    var FORWARD = 0;
+    var BACKWARD = 1;
+    var direction = FORWARD;
+    var main;// = new circle();
+    var path;
+    var totalLength;
+
+    var testPath;
+    var testPathString;
+
+    function loaded()
+    {
+        path = document.getElementById("path");
+        var roadPath = path.cloneNode();
+        //roadPath.setAttribute('stroke', 'black');
+        roadPath.setAttribute('stroke', 'url(#img1)');
+        roadPath.setAttribute('stroke-width', '20');
+        roadPath.setAttribute('stroke-join', 'round');
+
+        //alert(roadPath.getAttribute('d'));
+        var pathString = roadPath.getAttribute('d');
+        //pathString = roundPathCorners(pathString, 5, false);
+        //roadPath.setAttribute('d', pathString);
+
+        var svg = document.getElementById('sx');
+        svg.appendChild(roadPath); // this adds the road (i.e. the gray area)
+
+        var linePath = path.cloneNode();
+        linePath.setAttribute('stroke', 'white');
+        linePath.setAttribute('stroke-width', '2');
+        linePath.setAttribute('stroke-dasharray', '10,10');
+
+        //pathString = roundPathCorners(pathString, 5, false);
+       // linePath.setAttribute('d', pathString);
+
+        svg.appendChild(linePath); // this adds the white dash line down the middle of the road
+
+        testPath = path.cloneNode();
+        testPath.setAttribute('stroke', 'black');
+        testPath.setAttribute('stroke-width', '2');
+        testPath.setAttribute('id', 'testPath');
+        svg.appendChild(testPath);
+        testPathString = "";
+
+        gameList = [];
+        //gameList.push(new circle(0));
+        //gameList.push(new circle(100));
+        
+        totalLength = path.getTotalLength();
+        test();
+    }
+
+    function test() {
+        var svg = document.getElementById('sx');
+        pause = !pause;
+
+        //svg.appendChild(pathCopy);
+
+        if (pause) {
+            svg.unpauseAnimations();
+        } else {
+            svg.pauseAnimations();
+            requestAnimationFrame(move);
+        }
+    };
+
+    function move()
+    {
+        if (speed == 0)
+        {
+            requestAnimationFrame(move);
+            return;
+        }
+        if (pause)
+        {
+           return;
+        }
+
+        for (var jj = 0; jj < gameList.length; jj++)
+        {
+            var main = gameList[jj];
+            //console.log('length = ' + totalLength);
+
+            if (main.x < 0)
+            {
+              //x = 0;
+              main.x = Math.floor(totalLength);
+            } else if (main.x > Math.floor(totalLength))
+            {
+                main.x = 0;
+            }
+
+            var yy = path.getPointAtLength(main.x).y;
+            var xx = path.getPointAtLength(main.x).x + xOffset;
+
+            if (direction == FORWARD)
+                {
+                  main.x += speed;
+                }
+                else
+                {
+                  main.x -= speed;
+                }                
+
+            if (main.lastX == xx && main.lastY == yy) 
+            {
+                console.log("same");
+            }                
+
+                /*if (lastX == xx && lastY == yy) 
+                {
+                    if (direction == FORWARD)
+                      { 
+                          direction = BACKWARD;
+                      }
+                      else {
+                        direction = FORWARD;
+                      }  
+
+                      if (direction == FORWARD)
+                      {
+                        x += (speed * 3);
+                      }
+                      else
+                      {
+                        x -= (speed * 3);
+                      }  
+                }*/
+                    if (main.lastX == xx && main.lastY == yy)
+                    {
+                        main.lastX = 0;
+                        main.lastY = 0;
+                        x = 0;
+                    }
+                    else
+                    {
+                        main.lastX = xx;
+                        main.lastY = yy;
+                    }
+
+                var transformAttr = ' translate(' + (xx) + ',' + (yy-yOffset) + ')';
+
+                //var circles = document.getElementsByClassName("mycircle");
+                //circles[jj].setAttribute('transform', transformAttr);
+                var name = "circle" + jj.toString();
+                
+                var xyz = document.getElementsByName(name)[0];
+                if (xyz == null)
+                {
+                    console.log(name + " is null");
+                    return;
+                }
+                xyz.setAttribute('transform', transformAttr);
+
+                //for (var i = 0; i < circles.length; i++)
+                //{
+                 //   circles[i].setAttribute('transform', transformAttr);
+                //}
+            }
+
+            //Draw globalpath
+            var tps = roundPathCorners(testPathString, 5, false);  // This rounds out the corners
+            testPath.setAttribute('d', tps);
+
+            requestAnimationFrame(move);
+        }
+
+        function click(e) 
+        {
+          test() ;
+        }
+
+        function mousedown(event) 
+        {
+            var x = event.clientX;
+            var y = event.clientY;
+
+            if (testPathString == "")
+            {
+                //testPathString = "M";
+            }
+            else
+            {
+                //testPathString += "L";
+            }
+            //testPathString += x+","+y+" ";
+
+            //var triangle = document.getElementById("triangle");
+            //var path = document.getElementById("path");
+        }
+    </script>
+
+<!--
+    <path d="M0,55 L50,55 L 25,0 z " fill="yellow" stroke="black" stroke-width="1" onclick="function() {alert('d'); test()}" id="triangle" />
+    -->
+    
+    <path d="M100,100 L200,100 L200,150 L250,150 L250,100 L300,100 L300,150 L350,150 L350,50  C350,50 450,0 550,50 C550,50 650,175 550,250 L50,250 L100,100 z" fill="none" stroke="none" stroke-width="1" id="path" stroke-join="round"/>
+
+    <circle cx="0" cy="0" r="10" fill="none" stroke="none" stroke-width="1" id="triangle" onclick="click(this)" class="mycircle" />
+
+<!--
+    <path d="M0,0 L100,0 L50,86.603 z" stroke="green" fill="none" stroke-width="1"/>
+    <path d="M50,0 L50,86.603" stroke="black" />
+    <circle cx="50" cy="36.8015" r="10" stroke="black" stroke-width="1" fill="none"  />
+    -->
+
+    
+
+
+    <desc>Example animMotion01 - demonstrate motion animation computations</desc>
+    <!--<rect x="1" y="1" width="498" height="298" fill="none" stroke="blue" stroke-width="2" />-->
+
+    <!-- Draw the outline of the motion path in blue, along
+          with three small circles at the start, middle and end. -->
+    <!--<path id="path1" d="M100,250 C 100,50 400,50 400,250" fill="none" stroke="blue" stroke-width="7.06" />-->
+
+    <!-- <circle cx="100" cy="250" r="17.64" fill="blue" />
+    <circle cx="250" cy="100" r="17.64" fill="blue" />
+    <circle cx="400" cy="250" r="17.64" fill="blue" /> -->
+
+       
+
+    <!--<path d="M-25,-12.5 L25,-12.5 L 0,-87.5 z" fill="yellow" stroke="red" stroke-width="7.06" onclick="test()">
+        <!-- Define the motion path animation -->
+        <animateMotion dur="3s" repeatCount="indefinite" rotate="auto" id="ax">
+            <mpath xlink:href="#path1" />
+        </animateMotion>
+    </path> -->
+
+    <!--<circle cx="0" cy="0" r="10" fill="none" stroke="none" stroke-width="1" id="triangle" onclick="click()" class="mycircle" name="circle1" />-->
+
+</svg>
+<div>
+</body>
+</html>
