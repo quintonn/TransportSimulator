@@ -12,6 +12,6 @@ But before even starting game development, some other tasks need to be completed
   2. [pixi JS](http://www.pixijs.com/) 
   3. [Crafty JS](http://craftyjs.com/) 
   4. [Phaser IO](http://phaser.io/)
-  5. Use SVG and javascript directly. Basically creating my own engine
-    * Possibly even with using something like d3.js
+  5. Use SVG and javascript directly. Basically creating my own engine 
+		- Possibly even with using something like d3.js
 2. TODO: more things here.
