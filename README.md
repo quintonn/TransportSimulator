@@ -16,4 +16,5 @@ But before even starting game development, some other tasks need to be completed
 		- Possibly even with using something like d3.js
   6. Other?
 2. Will we need physics engine for this game?
-3. Try and create this game so as to re-use as much as possible later on. Possibly create a game engine (yes, another one of those).
+
+Try and create this game so as to re-use as much as possible later on. Possibly create a game engine (yes, another one of those).
