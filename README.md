@@ -7,11 +7,13 @@ Roads, for example, could be created using svg's using paths. Some preliminary t
 
 But before even starting game development, some other tasks need to be completed:
 
-1. Decide which game framework/engine to use. Some options so far include         
+1. Decide which game framework/engine to use. Some options so far include:      
   1. [Kiwi JS](http://www.kiwijs.org/)
   2. [pixi JS](http://www.pixijs.com/) 
   3. [Crafty JS](http://craftyjs.com/) 
   4. [Phaser IO](http://phaser.io/)
   5. Use SVG and javascript directly. Basically creating my own engine 
 		- Possibly even with using something like d3.js
-2. TODO: more things here.
+  6. Other?
+2. Will we need physics engine for this game?
+3. Try and create this game so as to re-use as much as possible later on. Possibly create a game engine (yes, another one of those).
