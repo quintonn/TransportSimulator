@@ -13,9 +13,9 @@ But before even starting game development, some other tasks need to be completed
   3. [Crafty JS](http://craftyjs.com/) 
   4. [Phaser IO](http://phaser.io/)
   5. Use SVG and javascript directly. Basically creating my own engine 
-		- Possibly even with using something like d3.js
-  6. Other?
+		- Possibly even with using something like d3.js  6. 
   7. [D3 JS](https://d3js.org/)
+  8. Other?
 2. Will we need physics engine for this game?
 
 Try and create this game so as to re-use as much as possible later on. Possibly create a game engine (yes, another one of those).
